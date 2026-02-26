@@ -15,17 +15,15 @@ console.log('🔍 Vercel Build Safety Check...\n');
 const dbUrl = process.env.DATABASE_URL;
 
 if (!dbUrl) {
-  console.error('❌ FATAL: DATABASE_URL environment variable not set!');
-  console.error('\n📋 You MUST configure DATABASE_URL in Vercel Dashboard:');
-  console.error('   1. Go to: https://vercel.com/dashboard/[project]/settings/environment-variables');
-  console.error('   2. Add variable: DATABASE_URL');
-  console.error('   3. Use PostgreSQL connection string (NOT SQLite)');
-  console.error('\n📦 Options to create PostgreSQL:');
-  console.error('   - Vercel Postgres: https://vercel.com/docs/storage/vercel-postgres');
-  console.error('   - Railway: https://railway.app');
-  console.error('   - Neon: https://neon.tech');
-  console.error('   - PlanetScale (MySQL): https://planetscale.com\n');
-  process.exit(1);
+  console.warn('⚠️ WARNING: DATABASE_URL environment variable not set.');
+  console.warn('\n📋 If you plan to use PostgreSQL in production, set `DATABASE_URL` in Vercel Dashboard before or after deploying.');
+  console.warn('   To run migrations automatically during build, set `DATABASE_URL`. If not set, migrations will be skipped.');
+  console.warn('\n📦 Options to create PostgreSQL:');
+  console.warn('   - Vercel Postgres: https://vercel.com/docs/storage/vercel-postgres');
+  console.warn('   - Railway: https://railway.app');
+  console.warn('   - Neon: https://neon.tech');
+  console.warn('   - PlanetScale (MySQL): https://planetscale.com\\n');
+  // Do not exit with error here — allow build to continue and skip migrations.
 }
 
 // 2. Warn if SQLite is used (development only)
