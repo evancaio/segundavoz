@@ -11,8 +11,8 @@ const path = require('path');
 
 console.log('🔍 Vercel Build Safety Check...\n');
 
-// 1. Check DATABASE_URL exists
-const dbUrl = process.env.DATABASE_URL;
+// 1. Check DATABASE_URL exists (accept several common env names)
+const dbUrl = process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL || process.env.POSTGRES_URL;
 
 if (!dbUrl) {
   console.warn('⚠️ WARNING: DATABASE_URL environment variable not set.');
@@ -27,7 +27,7 @@ if (!dbUrl) {
 }
 
 // 2. Warn if SQLite is used (development only)
-if (dbUrl.includes('file:') || dbUrl.includes('.db')) {
+if (dbUrl && (dbUrl.includes('file:') || dbUrl.includes('.db'))) {
   console.warn('⚠️  WARNING: Your DATABASE_URL uses SQLite!');
   console.warn('    SQLite does NOT persist on Vercel (ephemeral filesystem).\n');
   
@@ -39,7 +39,7 @@ if (dbUrl.includes('file:') || dbUrl.includes('.db')) {
 }
 
 // 3. Validate it looks like a valid connection string
-if (!dbUrl.includes('postgresql://') && !dbUrl.includes('mysql://') && !dbUrl.includes('file:')) {
+if (dbUrl && !dbUrl.includes('postgresql://') && !dbUrl.includes('mysql://') && !dbUrl.includes('file:')) {
   console.warn('⚠️  WARNING: DATABASE_URL does not look like a valid connection string');
   console.warn(`    Value: ${dbUrl.substring(0, 30)}...\n`);
 }
@@ -54,6 +54,8 @@ if (fs.existsSync(schemaPath)) {
   }
 }
 
-console.log('✅ Database configuration looks good!\n');
-console.log(`   DATABASE_URL: ${dbUrl.substring(0, 50)}...`);
+console.log('✅ Database configuration checks complete.\n');
+if (dbUrl) {
+  console.log(`   DATABASE_URL: ${dbUrl.substring(0, 50)}...`);
+}
 console.log(`   Environment: ${process.env.NODE_ENV || 'development'}\n`);
